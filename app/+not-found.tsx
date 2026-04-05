@@ -1,4 +1,11 @@
-// template
+/*
+
+Lines 9 - 46 written by John Henson
+
+In case somehow a user gets to something that doesn't exist. 
+
+*/
+
 import { Link, Stack } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 

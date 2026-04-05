@@ -1,3 +1,11 @@
+/*
+
+Lines 9 - 1128 written by Aidan Abbott 
+
+Reads Guide data from from DynamoDB and then translate it into a readable format on a screen
+
+*/
+
 import React, { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import {
   View, Text, TextInput, Pressable, StyleSheet, FlatList,

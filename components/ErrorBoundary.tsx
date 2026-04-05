@@ -1,3 +1,11 @@
+/*
+
+Lines 9 - 59 written by Aidan Abbott
+
+This compnenet is and error boundry that cathces any issue that is thrown. 
+
+*/
+
 import React, { Component, ComponentType, PropsWithChildren } from "react";
 import { ErrorFallback, ErrorFallbackProps } from "@/components/ErrorFallback";
 
@@ -8,10 +16,6 @@ export type ErrorBoundaryProps = PropsWithChildren<{
 
 type ErrorBoundaryState = { error: Error | null };
 
-/**
- * This is a special case for for using the class components. Error boundaries must be class components because React only provides error boundary functionality through lifecycle methods (componentDidCatch and getDerivedStateFromError) which are not available in functional components.
- * https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary
- */
 
 export class ErrorBoundary extends Component<
   ErrorBoundaryProps,
@@ -22,8 +26,8 @@ export class ErrorBoundary extends Component<
   static defaultProps: {
     FallbackComponent: ComponentType<ErrorFallbackProps>;
   } = {
-    FallbackComponent: ErrorFallback,
-  };
+      FallbackComponent: ErrorFallback,
+    };
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     return { error };

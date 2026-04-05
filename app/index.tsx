@@ -1,3 +1,11 @@
+/*
+
+Lines 9 - 358 written by Nate Gibson 
+
+Really the starting screen of the app but for the time being it is always the login screen. 
+
+*/
+
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, TextInput, Pressable, StyleSheet, ActivityIndicator,

@@ -1,3 +1,11 @@
+/*
+
+Lines 9 - 95 written by Nate Gibson 
+
+Database schema from our AWS DBS
+
+*/
+
 import { sql } from "drizzle-orm";
 import { pgTable, text, varchar, timestamp, integer, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";

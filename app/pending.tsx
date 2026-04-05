@@ -1,3 +1,11 @@
+/*
+
+Lines 9 - 199 written by Robert Harriman
+
+Screen for if you are still pending on your request
+
+*/
+
 import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Pressable, Platform, Animated, Easing, Image } from 'react-native';
 import { router } from 'expo-router';

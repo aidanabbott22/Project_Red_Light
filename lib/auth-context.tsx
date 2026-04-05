@@ -1,3 +1,11 @@
+/*
+
+Lines 9 - 207 written by Nate Gibson
+
+Used to grab user information and authentication status throughout the app. 
+
+*/
+
 import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
 import { apiRequest, getApiUrl } from '@/lib/query-client';
 import { fetch } from 'expo/fetch';
@@ -171,7 +179,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         method: 'POST',
         credentials: 'include',
       });
-    } catch {}
+    } catch { }
     setUser(null);
   };
 

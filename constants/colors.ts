@@ -1,3 +1,11 @@
+/*
+
+Lines 9 - 45 written by Robert Harriman
+
+Colors for app
+
+*/
+
 const primaryBlue = "#4A90C4";
 const primaryBlueDark = "#3A7AB0";
 const navy = "#1B4965";

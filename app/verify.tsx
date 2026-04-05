@@ -1,3 +1,11 @@
+/*
+
+Lines 7 - 324 written by Ryan Gartner 
+
+Verify screen if you get accepted. Still needs updates due to misscommunication. 
+
+*/
+
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View, Text, TextInput, Pressable, StyleSheet, ActivityIndicator,

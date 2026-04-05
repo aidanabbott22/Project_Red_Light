@@ -1,3 +1,11 @@
+/*
+
+Lines 9 - 294 written by Aidan Abbott 
+
+Fallback screen for testing if an error is thrown. 
+
+*/
+
 import React, { useState } from "react";
 import { reloadAppAsync } from "expo";
 import {

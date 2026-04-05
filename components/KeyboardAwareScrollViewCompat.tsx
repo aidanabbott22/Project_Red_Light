@@ -1,4 +1,11 @@
-// template
+/*
+
+Lines 9 - 37 written by Nate Gibson 
+
+Allows for the use of keyboard scroll view on web and mobile. 
+
+*/
+
 import { Platform, ScrollView, ScrollViewProps } from "react-native";
 import {
   KeyboardAwareScrollView,

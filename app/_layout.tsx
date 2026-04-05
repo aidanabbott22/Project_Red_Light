@@ -1,3 +1,11 @@
+/*
+
+Lines 7 - 62 written by Nate Gibson 
+
+Puts all screens in order from register/sign in to actual guide content
+
+*/
+
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";

@@ -1,3 +1,12 @@
+/*
+
+Lines 9 - 562 written by Nate Gibson and John Henson
+
+New reformat for registration screen sisnce it looked bad. 
+
+Now adds job types: Law Enforcement, Healthcare Providers, and Social Services. 
+*/
+
 import React, { useState } from 'react';
 import {
   View, Text, TextInput, Pressable, StyleSheet, ActivityIndicator,
@@ -47,7 +56,7 @@ export default function RegisterScreen() {
   };
 
   const currentOccupations = form.userType ? (OCCUPATIONS[form.userType] || []) : [];
-  
+
   const handleRegister = async () => {
     const { firstName, lastName, email, phone, userType, occupation, department, password, confirmPassword } = form;
 
