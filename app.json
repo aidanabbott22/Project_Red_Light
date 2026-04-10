@@ -39,6 +39,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "databaseUrl": "postgresql://RedlightAdmin:Admin4redlight123%21@redlight-db.cvwwc0w28xme.us-east-2.rds.amazonaws.com:5432/postgres?sslmode=require",
+      "sessionSecret": "beboo-blah",
+      "resendApiKey": "re_your_key_here",
+      "publicDomain": "localhost:5000"
     }
   }
 }

@@ -17,6 +17,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '@/lib/auth-context';
 import Colors from '@/constants/colors';
+import Constants from 'expo-constants';
+
+const { databaseUrl, sessionSecret, resendApiKey, publicDomain } = Constants.expoConfig?.extra ?? {};
+
+console.log("Database URL:", databaseUrl);
+console.log("Session Secret Loaded:", !!sessionSecret);
+console.log("Resend API Key Loaded:", !!resendApiKey);
+console.log("Public Domain:", publicDomain);
 
 const logoImage = require('@/assets/images/logo.png');
 

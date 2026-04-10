@@ -41,7 +41,10 @@ interface RegisterData {
   phone: string;
   occupation: string;
   department: string;
+  city: string;
+  state: string;
   password: string;
+  role: string;
   userType?: string;
   location?: string;
 }

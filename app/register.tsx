@@ -33,6 +33,14 @@ const OCCUPATIONS: Record<string, string[]> = {
   cps: ['CPS Investigator', 'APS Investigator', 'Case Manager', 'Supervisor', 'Intake Specialist', 'Other'],
 };
 
+const states = [
+  "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
+  "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
+  "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
+  "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
+  "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"
+];
+
 export default function RegisterScreen() {
   const insets = useSafeAreaInsets();
   const { register } = useAuth();
@@ -41,9 +49,11 @@ export default function RegisterScreen() {
     lastName: '',
     email: '',
     phone: '',
-    userType: '',
+    role: '',
     occupation: '',
     department: '',
+    city: '',
+    state: '',
     password: '',
     confirmPassword: '',
   });
@@ -55,12 +65,13 @@ export default function RegisterScreen() {
     setForm(prev => ({ ...prev, [key]: value }));
   };
 
-  const currentOccupations = form.userType ? (OCCUPATIONS[form.userType] || []) : [];
+  const [showStatePicker, setShowStatePicker] = useState(false);
+  const currentOccupations = form.role ? (OCCUPATIONS[form.role] || []) : [];
 
   const handleRegister = async () => {
-    const { firstName, lastName, email, phone, userType, occupation, department, password, confirmPassword } = form;
+    const { firstName, lastName, email, phone, role, occupation, department, city, state, password, confirmPassword } = form;
 
-    if (!firstName || !lastName || !email || !phone || !userType || !occupation || !department || !password) {
+    if (!firstName || !lastName || !email || !phone || !role || !occupation || !department || !city || !state || !password) {
       setError('Please fill in all fields');
       return;
     }
@@ -83,8 +94,10 @@ export default function RegisterScreen() {
       phone,
       occupation,
       department,
+      city,
+      state,
       password,
-      userType,
+      role,
     });
 
     if (result.success && result.userId) {
@@ -192,9 +205,9 @@ export default function RegisterScreen() {
                 {USER_TYPE_OPTIONS.map(option => (
                   <Pressable
                     key={option.value}
-                    style={[styles.roleOption, form.userType === option.value && styles.roleOptionActive]}
+                    style={[styles.roleOption, form.role === option.value && styles.roleOptionActive]}
                     onPress={() => {
-                      updateField('userType', option.value);
+                      updateField('role', option.value);
                       updateField('occupation', '');
                       setShowOccupationPicker(false);
                     }}
@@ -202,9 +215,9 @@ export default function RegisterScreen() {
                     <Ionicons
                       name={option.icon}
                       size={20}
-                      color={form.userType === option.value ? 'white' : Colors.light.tint}
+                      color={form.role === option.value ? 'white' : Colors.light.tint}
                     />
-                    <Text style={[styles.roleOptionText, form.userType === option.value && styles.roleOptionTextActive]}>
+                    <Text style={[styles.roleOptionText, form.role === option.value && styles.roleOptionTextActive]}>
                       {option.label}
                     </Text>
                   </Pressable>
@@ -212,7 +225,7 @@ export default function RegisterScreen() {
               </View>
             </View>
 
-            {form.userType ? (
+            {form.role ? (
               <View style={styles.inputGroup}>
                 <Text style={styles.label}>Occupation</Text>
                 <Pressable
@@ -257,6 +270,71 @@ export default function RegisterScreen() {
                 value={form.department}
                 onChangeText={(v) => updateField('department', v)}
               />
+            </View>
+            <View style={styles.row}>
+              <View style={[styles.inputGroup, { flex: 1 }]}>
+                <Text style={styles.label}>City</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="eg. New York City"
+                  placeholderTextColor="#ADB5BD"
+                  value={form.city}
+                  onChangeText={(v) => updateField('city', v)}
+                />
+              </View>
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>State</Text>
+
+                <Pressable
+                  style={styles.selectBtn}
+                  onPress={() => setShowStatePicker(!showStatePicker)}
+                >
+                  <Text style={[styles.selectText, !form.state && styles.placeholder]}>
+                    {form.state || 'Select state'}
+                  </Text>
+
+                  <Ionicons
+                    name={showStatePicker ? "chevron-up" : "chevron-down"}
+                    size={17}
+                    color="#ADB5BD"
+                  />
+                </Pressable>
+
+                {showStatePicker && (
+                  <View style={styles.pickerDropdown}>
+                    {states.map((st) => (
+                      <Pressable
+                        key={st}
+                        style={[
+                          styles.pickerItem,
+                          form.state === st && styles.pickerItemActive
+                        ]}
+                        onPress={() => {
+                          updateField('state', st);
+                          setShowStatePicker(false);
+                        }}
+                      >
+                        <Text
+                          style={[
+                            styles.pickerItemText,
+                            form.state === st && styles.pickerItemTextActive
+                          ]}
+                        >
+                          {st}
+                        </Text>
+
+                        {form.state === st && (
+                          <Ionicons
+                            name="checkmark"
+                            size={15}
+                            color={Colors.light.tint}
+                          />
+                        )}
+                      </Pressable>
+                    ))}
+                  </View>
+                )}
+              </View>
             </View>
 
             <View style={styles.sectionDivider}>

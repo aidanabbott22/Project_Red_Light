@@ -6,6 +6,15 @@ if (!dbUrl) {
   throw new Error("DATABASE_URL, ensure the database is provisioned");
 }
 
+if (!dbUrl) {
+  console.error("❌ DATABASE_URL_OVERRIDE is missing!");
+} else {
+  const url = new URL(dbUrl);
+  console.log("✅ DB Host:", url.hostname);
+  console.log("✅ DB Name:", url.pathname.slice(1)); // remove leading /
+  console.log("✅ SSL mode:", url.searchParams.get("sslmode"));
+}
+
 const isExternal =
   !dbUrl.includes("localhost") && !dbUrl.includes("127.0.0.1");
 
