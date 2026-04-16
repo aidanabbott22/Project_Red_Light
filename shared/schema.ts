@@ -23,9 +23,9 @@ export const users = pgTable("users", {
   department: text("department").notNull(),
   password: text("password").notNull(),
   role: text("role").notNull().default("user"),
-  userType: text("user_type").notNull().default("law_enforcement"),
   status: text("status").notNull().default("pending"),
-  location: text("location"),
+  city: text("city"),
+  state: text("state"),
   emailVerified: boolean("email_verified").notNull().default(true),
   phoneVerified: boolean("phone_verified").notNull().default(true),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -78,7 +78,9 @@ export const insertUserSchema = createInsertSchema(users).pick({
   occupation: true,
   department: true,
   password: true,
-  userType: true,
+  role: true,
+  city: true,
+  state: true,
 });
 
 export const loginSchema = z.object({

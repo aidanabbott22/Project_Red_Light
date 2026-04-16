@@ -20,6 +20,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getApiUrl } from '@/lib/query-client';
 import { fetch } from 'expo/fetch';
 import { useAuth } from '@/lib/auth-context';
+import { getAuthHeaders } from '@/lib/query-client';
 import Colors from '@/constants/colors';
 
 const logoImage = require('@/assets/images/logo.png');
@@ -187,7 +188,12 @@ export default function GuideScreen() {
   const fetchAndCacheGuide = async () => {
     const baseUrl = getApiUrl();
     const url = new URL('/api/guide', baseUrl);
-    const res = await fetch(url.toString(), { credentials: 'include' });
+    const authHeaders = await getAuthHeaders();
+
+    const res = await fetch(url.toString(), {
+      headers: authHeaders,
+    });
+
     if (!res.ok) throw new Error('Failed to fetch guide');
     const text = await res.text();
     if (!text || text === 'null') { setGuideData(null); return; }

@@ -1,25 +1,34 @@
 /*
-
+ 
 Lines 9 - 199 written by Robert Harriman
-
+Updated with status polling logic.
+ 
 Screen for if you are still pending on your request
-
+ 
 */
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, Platform, Animated, Easing, Image } from 'react-native';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { fetch } from 'expo/fetch';
+import { getApiUrl } from '@/lib/query-client';
+import { getAuthHeaders } from '@/lib/query-client';
 import Colors from '@/constants/colors';
 
 const logoImage = require('@/assets/images/logo.png');
+
+const POLL_INTERVAL = 8000; // check every 8 seconds
 
 export default function PendingScreen() {
   const insets = useSafeAreaInsets();
   const spinValue = useRef(new Animated.Value(0)).current;
   const pulseValue = useRef(new Animated.Value(1)).current;
+  const [denied, setDenied] = useState(false);
+  const [sessionExpired, setSessionExpired] = useState(false);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     const spin = Animated.loop(
@@ -41,6 +50,46 @@ export default function PendingScreen() {
     return () => { spin.stop(); pulse.stop(); };
   }, [spinValue, pulseValue]);
 
+  useEffect(() => {
+    checkStatus();
+    pollRef.current = setInterval(checkStatus, POLL_INTERVAL);
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current);
+    };
+  }, []);
+
+  async function checkStatus() {
+    try {
+      const baseUrl = getApiUrl();
+      const url = new URL('/api/auth/me', baseUrl);
+      const authHeaders = await getAuthHeaders();
+
+      const res = await fetch(url.toString(), {
+        headers: authHeaders,
+      });
+
+      if (res.status === 401) {
+        if (pollRef.current) clearInterval(pollRef.current);
+        setSessionExpired(true);
+        return;
+      }
+
+      if (!res.ok) return;
+
+      const data = await res.json();
+
+      if (data.status === 'approved') {
+        if (pollRef.current) clearInterval(pollRef.current);
+        router.replace('/guide');
+      } else if (data.status === 'denied') {
+        if (pollRef.current) clearInterval(pollRef.current);
+        setDenied(true);
+      }
+    } catch {
+      // Network error, keep polling
+    }
+  }
+
   const rotation = spinValue.interpolate({
     inputRange: [0, 1],
     outputRange: ['0deg', '360deg'],
@@ -48,11 +97,69 @@ export default function PendingScreen() {
 
   const webTopInset = Platform.OS === 'web' ? 67 : 0;
 
+  // ── Session expired state ──────────────────────────────────────────────────
+  if (sessionExpired) {
+    return (
+      <LinearGradient colors={['#1B4965', '#142F42']} style={styles.outerContainer}>
+        <View style={[styles.container, { paddingTop: insets.top + webTopInset + 24, paddingBottom: Platform.OS === 'web' ? 34 : insets.bottom + 24 }]}>
+          <View style={styles.logoSection}>
+            <Image source={logoImage} style={styles.logoImage} resizeMode="contain" />
+            <Text style={styles.appName}>Project Red Light</Text>
+          </View>
+          <View style={styles.card}>
+            <View style={[styles.iconBg, { backgroundColor: '#FFF3CD', borderColor: '#FDE68A' }]}>
+              <Ionicons name="time-outline" size={32} color="#D97706" />
+            </View>
+            <Text style={styles.title}>Session Expired</Text>
+            <Text style={styles.subtitle}>
+              Your session has expired. Please sign in again to check your approval status.
+            </Text>
+            <Pressable
+              style={({ pressed }) => [styles.backButton, pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] }]}
+              onPress={() => router.replace('/')}
+            >
+              <Ionicons name="log-in-outline" size={17} color="white" />
+              <Text style={styles.backButtonText}>Sign In Again</Text>
+            </Pressable>
+          </View>
+        </View>
+      </LinearGradient>
+    );
+  }
+
+  // ── Denied state ───────────────────────────────────────────────────────────
+  if (denied) {
+    return (
+      <LinearGradient colors={['#1B4965', '#142F42']} style={styles.outerContainer}>
+        <View style={[styles.container, { paddingTop: insets.top + webTopInset + 24, paddingBottom: Platform.OS === 'web' ? 34 : insets.bottom + 24 }]}>
+          <View style={styles.logoSection}>
+            <Image source={logoImage} style={styles.logoImage} resizeMode="contain" />
+            <Text style={styles.appName}>Project Red Light</Text>
+          </View>
+          <View style={styles.card}>
+            <View style={[styles.iconBg, { backgroundColor: '#FEE2E2', borderColor: '#FECACA' }]}>
+              <Ionicons name="close-circle-outline" size={32} color="#DC2626" />
+            </View>
+            <Text style={styles.title}>Access Denied</Text>
+            <Text style={styles.subtitle}>
+              Your access request has been denied. Please contact your administrator if you believe this is an error.
+            </Text>
+            <Pressable
+              style={({ pressed }) => [styles.backButton, { backgroundColor: '#DC2626' }, pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] }]}
+              onPress={() => router.replace('/')}
+            >
+              <Ionicons name="arrow-back" size={17} color="white" />
+              <Text style={styles.backButtonText}>Back to Sign In</Text>
+            </Pressable>
+          </View>
+        </View>
+      </LinearGradient>
+    );
+  }
+
+  // ── Pending state (default) ────────────────────────────────────────────────
   return (
-    <LinearGradient
-      colors={['#1B4965', '#142F42']}
-      style={styles.outerContainer}
-    >
+    <LinearGradient colors={['#1B4965', '#142F42']} style={styles.outerContainer}>
       <View style={[styles.container, { paddingTop: insets.top + webTopInset + 24, paddingBottom: Platform.OS === 'web' ? 34 : insets.bottom + 24 }]}>
         <View style={styles.logoSection}>
           <View style={styles.logoWrapper}>
@@ -72,13 +179,13 @@ export default function PendingScreen() {
 
           <Text style={styles.title}>Awaiting Approval</Text>
           <Text style={styles.subtitle}>
-            Your access request has been submitted and is pending administrator review. You'll be able to sign in once approved.
+            Your access request has been submitted and is pending administrator review. You'll be notified once approved.
           </Text>
 
           <View style={styles.infoBox}>
             <Ionicons name="information-circle-outline" size={16} color="#4A90C4" />
             <Text style={styles.infoText}>
-              Approvals are typically completed within 1–2 business days.
+              This screen checks automatically every few seconds. You'll be redirected as soon as your request is reviewed.
             </Text>
           </View>
 
@@ -140,6 +247,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#DBEAFE',
+    marginBottom: 20,
   },
   title: {
     fontFamily: 'Inter_700Bold',

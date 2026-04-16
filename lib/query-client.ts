@@ -1,28 +1,58 @@
 /*
 
-Lines 9 - 88 written by Nate Gibson 
+Lines 9 - 88 written by Nate Gibson
+Updated with JWT token support and http fix.
 
 Ability to query database through API
 
 */
 
-import { fetch } from "expo/fetch";
+import * as SecureStore from 'expo-secure-store';
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
+const TOKEN_KEY = 'mobile_auth_token';
+
 /**
- * Gets the base URL for the Express API server (e.g., "http://localhost:3000")
- * @returns {string} The API base URL
+ * Gets the base URL for the Express API server
  */
 export function getApiUrl(): string {
-  let host = process.env.EXPO_PUBLIC_DOMAIN;
+  const host = process.env.EXPO_PUBLIC_DOMAIN;
 
   if (!host) {
     return "http://localhost:5000/";
   }
 
-  let url = new URL(`https://${host}`);
+  // Use http for local IPs, https for production domains
+  const isLocal = host.startsWith('192.168') ||
+    host.startsWith('10.') ||
+    host.startsWith('172.') ||
+    host.includes('localhost');
 
+  const protocol = isLocal ? 'http' : 'https';
+  const url = new URL(`${protocol}://${host}`);
   return url.href;
+}
+
+/**
+ * Gets the stored JWT token
+ */
+export async function getStoredToken(): Promise<string | null> {
+  try {
+    return await SecureStore.getItemAsync(TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Returns Authorization header with JWT token if available
+ */
+export async function getAuthHeaders(): Promise<Record<string, string>> {
+  const token = await getStoredToken();
+  if (token) {
+    return { Authorization: `Bearer ${token}` };
+  }
+  return {};
 }
 
 async function throwIfResNotOk(res: Response) {
@@ -35,16 +65,19 @@ async function throwIfResNotOk(res: Response) {
 export async function apiRequest(
   method: string,
   route: string,
-  data?: unknown | undefined,
+  data?: unknown,
 ): Promise<Response> {
   const baseUrl = getApiUrl();
   const url = new URL(route, baseUrl);
+  const authHeaders = await getAuthHeaders();
 
   const res = await fetch(url.toString(), {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
+    headers: {
+      ...(data ? { "Content-Type": "application/json" } : {}),
+      ...authHeaders,
+    },
     body: data ? JSON.stringify(data) : undefined,
-    credentials: "include",
   });
 
   await throwIfResNotOk(res);
@@ -52,6 +85,7 @@ export async function apiRequest(
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";
+
 export const getQueryFn: <T>(options: {
   on401: UnauthorizedBehavior;
 }) => QueryFunction<T> =
@@ -59,9 +93,10 @@ export const getQueryFn: <T>(options: {
     async ({ queryKey }) => {
       const baseUrl = getApiUrl();
       const url = new URL(queryKey.join("/") as string, baseUrl);
+      const authHeaders = await getAuthHeaders();
 
       const res = await fetch(url.toString(), {
-        credentials: "include",
+        headers: authHeaders,
       });
 
       if (unauthorizedBehavior === "returnNull" && res.status === 401) {

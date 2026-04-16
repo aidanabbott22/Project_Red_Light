@@ -69,6 +69,7 @@ export default function RegisterScreen() {
   const currentOccupations = form.role ? (OCCUPATIONS[form.role] || []) : [];
 
   const handleRegister = async () => {
+    console.log('handleRegister fired', form); // 👈 add this
     const { firstName, lastName, email, phone, role, occupation, department, city, state, password, confirmPassword } = form;
 
     if (!firstName || !lastName || !email || !phone || !role || !occupation || !department || !city || !state || !password) {
@@ -101,7 +102,7 @@ export default function RegisterScreen() {
     });
 
     if (result.success && result.userId) {
-      router.replace({ pathname: '/verify', params: { userId: result.userId } });
+      router.replace('/pending');
     } else {
       setError(result.message || 'Registration failed');
     }

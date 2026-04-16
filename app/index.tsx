@@ -63,8 +63,6 @@ export default function LoginScreen() {
     const result = await login(email.trim(), password.trim());
     if (result.success) {
       router.replace('/guide');
-    } else if (result.status === 'unverified' && result.userId) {
-      router.replace({ pathname: '/verify', params: { userId: result.userId } });
     } else if (result.status === 'pending') {
       router.replace('/pending');
     } else if (result.status === 'denied') {
