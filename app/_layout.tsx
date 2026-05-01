@@ -1,6 +1,6 @@
 /*
 
-Lines 7 - 62 written by Nate Gibson 
+Lines 7 - 63 written by Nate Gibson 
 
 Puts all screens in order from register/sign in to actual guide content
 

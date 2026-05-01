@@ -1,6 +1,6 @@
 /*
 
-Lines 9 - 88 written by Nate Gibson
+Lines 9 - 123 written by Nate Gibson
 Updated with JWT token support and http fix.
 
 Ability to query database through API

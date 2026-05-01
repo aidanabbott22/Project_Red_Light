@@ -1,6 +1,6 @@
 /*
 
-Lines 9 - 1128 written by Aidan Abbott 
+Lines 9 - 1134 written by Aidan Abbott 
 
 Reads Guide data from from DynamoDB and then translate it into a readable format on a screen
 

@@ -1,6 +1,6 @@
 /*
  
-Lines 9 - 207 written by Nate Gibson
+Lines 9 - 192 written by Nate Gibson
 Updated with JWT mobile authentication and SecureStore.
  
 Used to grab user information and authentication status throughout the app.

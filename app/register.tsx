@@ -1,6 +1,6 @@
 /*
 
-Lines 9 - 562 written by Nate Gibson and John Henson
+Lines 9 - 642 written by Nate Gibson and John Henson
 
 New reformat for registration screen sisnce it looked bad. 
 

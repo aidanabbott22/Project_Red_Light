@@ -1,6 +1,6 @@
 /*
 
-Lines 9 - 358 written by Nate Gibson 
+Lines 9 - 366 written by Nate Gibson 
 
 Really the starting screen of the app but for the time being it is always the login screen. 
 
@@ -18,6 +18,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '@/lib/auth-context';
 import Colors from '@/constants/colors';
 import Constants from 'expo-constants';
+import * as SecureStore from "expo-secure-store";
 
 const { databaseUrl, sessionSecret, resendApiKey, publicDomain } = Constants.expoConfig?.extra ?? {};
 
@@ -52,6 +53,7 @@ export default function LoginScreen() {
       </LinearGradient>
     );
   }
+
 
   const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
@@ -180,7 +182,7 @@ export default function LoginScreen() {
 
           <View style={styles.footer}>
             <Ionicons name="shield-checkmark" size={13} color="rgba(255,255,255,0.4)" />
-            <Text style={styles.footerText}>Secure Law Enforcement Access</Text>
+            <Text style={styles.footerText}>Secure Access</Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
